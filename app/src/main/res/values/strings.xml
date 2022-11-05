@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Табличка</string>
+    <string name="main_activity_title">Табличка</string>
+    <string name="main_button">Поехали</string>
+</resources>
