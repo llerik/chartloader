@@ -6,4 +6,6 @@
     <string name="error_message_incorrect_number">Число должно быть больше 1 и не больше 1000</string>
     <string name="error_message_input_empty">Введите число</string>
     <string name="error_message_incorrect_answer">Что-то пошло не так. Попробуйте еще раз</string>
+    <string name="coordinate_x">X</string>
+    <string name="coordinate_y">Y</string>
 </resources>

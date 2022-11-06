@@ -1,11 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TableLayout
+        android:id="@+id/header_table"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/small"
+        android:layout_marginTop="@dimen/small"
+        android:background="@drawable/table_border"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/coordinate_x"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/table_row_item"
+                android:layout_column="1"
+                android:text="@string/coordinate_x" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/coordinate_y"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/table_row_item"
+                android:layout_column="1"
+                android:text="@string/coordinate_y" />
+        </TableRow>
+    </TableLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/small"
+        android:layout_marginEnd="@dimen/small"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/header_table"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/point_view_holder_layout" />
+
     <ru.sorokin.kirill.chartloader.presentation.view.ChartView
         android:id="@+id/chart_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/small"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recycler_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

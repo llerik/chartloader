@@ -5,8 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.RecyclerView
 import ru.sorokin.kirill.chartloader.R
+import ru.sorokin.kirill.chartloader.presentation.chart.list.PointListAdapter
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 import ru.sorokin.kirill.chartloader.presentation.view.ChartView
 
@@ -15,8 +16,7 @@ import ru.sorokin.kirill.chartloader.presentation.view.ChartView
  *
  * @author Sorokin Kirill
  */
-class ChartActivity:  AppCompatActivity(R.layout.chart_activity) {
-
+class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
     private lateinit var chartView: ChartView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,12 +24,15 @@ class ChartActivity:  AppCompatActivity(R.layout.chart_activity) {
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
         }
-        chartView = findViewById(R.id.chart_view)
-
         val parcelablesArray = intent.getParcelableArrayExtra(ARG_POINTS) ?: arrayOf()
         val models = parcelablesArray.asList().map { it as PointModel }
         Log.d(TAG, "onCreate: $models")
-        chartView.setContent(models, false)
+
+        chartView = findViewById(R.id.chart_view)
+        findViewById<RecyclerView>(R.id.recycler_view)?.apply {
+            adapter = PointListAdapter(models)
+        }
+        chartView.setContent(models, true)
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -8,6 +8,7 @@ import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import ru.sorokin.kirill.chartloader.R
 import ru.sorokin.kirill.chartloader.domain.repository.PointsRepository
+import ru.sorokin.kirill.chartloader.presentation.core.SingleLiveEvent
 import ru.sorokin.kirill.chartloader.presentation.core.network.RxSupport
 import ru.sorokin.kirill.chartloader.presentation.core.resource.ResourceManager
 import ru.sorokin.kirill.chartloader.presentation.main.converter.PointModelConverter
@@ -28,7 +29,7 @@ class MainViewModel(
     private val errorLiveData = MutableLiveData<String>()
     private val progressLiveData = MutableLiveData<Boolean>()
     private val buttonEnableLiveData = MutableLiveData<Boolean>()
-    private val dataLiveData = MutableLiveData<List<PointModel>>()
+    private val dataLiveData = SingleLiveEvent<List<PointModel>>()
 
     /**
      * [LiveData] todo

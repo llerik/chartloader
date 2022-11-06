@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="table_row_item" parent="@android:style/TextAppearance.Small">
+        <item name="android:textSize">@dimen/table_text_size</item>
+        <item name="android:background">?attr/colorOnPrimary</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:minWidth">@dimen/row_width</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingEnd">5dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+</resources>

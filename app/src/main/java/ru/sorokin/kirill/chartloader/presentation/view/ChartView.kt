@@ -45,6 +45,7 @@ class ChartView @JvmOverloads constructor(
     private val pathPoints = Path()
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         strokeWidth = DEFAULT_STROKE_WIDTH
+        color = Color.BLUE
     }
     private var downTouch = false
     private var isSmooth = false
@@ -95,7 +96,7 @@ class ChartView @JvmOverloads constructor(
         canvas.drawColor(Color.WHITE)
         canvas.translate(distance.x, distance.y)
 
-        paint.color = Color.GREEN
+
         paint.style = Paint.Style.STROKE
         canvas.drawPath(pathLine, paint)
 
