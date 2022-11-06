@@ -11,6 +11,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import ru.sorokin.kirill.chartloader.R
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 import ru.sorokin.kirill.chartloader.presentation.view.move.MoveGestureListener
 import ru.sorokin.kirill.chartloader.presentation.view.move.MoveListener
@@ -24,7 +25,9 @@ import ru.sorokin.kirill.chartloader.presentation.view.scale.ScaleListener
  * @author Sorokin Kirill
  */
 class ChartView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr), ScaleListener, MoveListener {
 
     private val scaleGestureDetector = ScaleGestureDetector(
@@ -40,16 +43,23 @@ class ChartView @JvmOverloads constructor(
     )
     private val moveGestureDetector = GestureDetector(context, MoveGestureListener(this))
     private val distance = PointF(0f, 0f)
+    private val backgroundColor = attrs?.let {
+        val typedArray = context.obtainStyledAttributes(it, R.styleable.ChartView)
+        val color = typedArray.getColor(R.styleable.ChartView_chart_background, Color.WHITE)
+        typedArray.recycle()
+        color
+    } ?: Color.WHITE
     private val points = mutableListOf<PointModel>()
     private val pathLine = Path()
     private val pathPoints = Path()
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         strokeWidth = DEFAULT_STROKE_WIDTH
-        color = Color.BLUE
+        color = Color.GREEN
     }
     private var downTouch = false
     private var isSmooth = false
-    private var scale = 1f
+    private var scaleRateX = 1f
+    private var scaleRateY = 1f
 
     /**
      * Установить флаг сглаживания [isSmooth]
@@ -74,10 +84,9 @@ class ChartView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.scale(scale, scale)
-        canvas.drawColor(Color.WHITE)
+        canvas.drawColor(backgroundColor)
+        canvas.scale(scaleRateX, scaleRateY)
         canvas.translate(distance.x, distance.y)
-
 
         paint.style = Paint.Style.STROKE
         canvas.drawPath(pathLine, paint)
@@ -138,20 +147,26 @@ class ChartView @JvmOverloads constructor(
     }
 
     override fun onScaleChange(scaleFactor: Float) {
-        scale *= scaleFactor
-        if (scale < MIN_SCALE) {
-            scale = MIN_SCALE
-        } else if (scale > MAX_SCALE) {
-            scale = MAX_SCALE
+        scaleRateX *= scaleFactor
+        if (scaleRateX < MIN_SCALE) {
+            scaleRateX = MIN_SCALE
+        } else if (scaleRateX > MAX_SCALE) {
+            scaleRateX = MAX_SCALE
         }
-        Log.d(TAG, "onScaleChange: scaleFactor: $scaleFactor scale: $scale")
+        scaleRateY *= scaleFactor
+        if (scaleRateY < MIN_SCALE) {
+            scaleRateY = MIN_SCALE
+        } else if (scaleRateY > MAX_SCALE) {
+            scaleRateY = MAX_SCALE
+        }
+        Log.d(TAG, "onScaleChange: scaleFactor: $scaleFactor scaleRateX: $scaleRateX")
         invalidate()
     }
 
     override fun onMove(point: PointF) {
         Log.d(TAG, "onMove: $point")
-        distance.x += point.x * 1 / scale
-        distance.y += point.y * 1 / scale
+        distance.x += point.x * 1 / scaleRateX
+        distance.y += point.y * 1 / scaleRateY
         invalidate()
     }
 
@@ -161,7 +176,8 @@ class ChartView @JvmOverloads constructor(
             setList(points)
             distance.x = distancePoint.x
             distance.y = distancePoint.y
-            scaleFactor = scale
+            scaleFactorX = scaleRateX
+            scaleFactorY = scaleRateY
             smooth = isSmooth
         }
     }
@@ -172,7 +188,8 @@ class ChartView @JvmOverloads constructor(
             super.onRestoreInstanceState(state.superState)
             with(state) {
                 distancePoint = distance
-                scale = scaleFactor
+                scaleRateX = scaleFactorX
+                scaleRateY = scaleFactorY
                 smooth = isSmooth
                 points.reset(getList())
                 updatePath()
@@ -193,12 +210,12 @@ class ChartView @JvmOverloads constructor(
         /**
          * Радиус точки
          */
-        private const val RADIUS = 3F
+        private const val RADIUS = 0.05F
 
         /**
          * Максимальное увеличение графика
          */
-        private const val MAX_SCALE = 40f
+        private const val MAX_SCALE = 100f
 
         /**
          * Минимальное увеличение (отдаление) графика
@@ -208,7 +225,7 @@ class ChartView @JvmOverloads constructor(
         /**
          * Толщина строки
          */
-        private const val DEFAULT_STROKE_WIDTH = 2f
+        private const val DEFAULT_STROKE_WIDTH = 0.05f
 
         /**
          * Минимальный размер (dp) для определения жеста изменения размера
@@ -221,14 +238,16 @@ class ChartView @JvmOverloads constructor(
      */
     private class SavedState : BaseSavedState {
         private var points = mutableListOf<PointModel>()
-        var scaleFactor = 0f
+        var scaleFactorX = 0f
+        var scaleFactorY = 0f
         var distancePoint = PointF(0f, 0f)
         var smooth = false
 
         constructor(parcel: Parcel?) : super(parcel) {
             parcel?.apply {
                 readList(points, PointModel::class.java.classLoader)
-                scaleFactor = readFloat()
+                scaleFactorX = readFloat()
+                scaleFactorY = readFloat()
                 distancePoint = PointF.CREATOR.createFromParcel(this)
                 smooth = readInt() != 0
             }
@@ -239,7 +258,8 @@ class ChartView @JvmOverloads constructor(
         override fun writeToParcel(parcel: Parcel, flags: Int) {
             super.writeToParcel(parcel, flags)
             parcel.writeList(points)
-            parcel.writeFloat(scaleFactor)
+            parcel.writeFloat(scaleFactorX)
+            parcel.writeFloat(scaleFactorY)
             parcel.writeParcelable(distancePoint, PointF.PARCELABLE_WRITE_RETURN_VALUE)
             parcel.writeInt(if (smooth) 1 else 0)
         }

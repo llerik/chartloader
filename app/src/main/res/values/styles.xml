@@ -11,4 +11,8 @@
         <item name="android:paddingBottom">2dp</item>
         <item name="android:textAlignment">center</item>
     </style>
+
+    <style name="ChartView">
+        <item name="chart_background">?attr/colorOnPrimary</item>
+    </style>
 </resources>

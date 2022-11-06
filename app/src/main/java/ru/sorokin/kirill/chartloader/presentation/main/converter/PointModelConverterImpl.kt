@@ -11,12 +11,6 @@ import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 class PointModelConverterImpl : PointModelConverter {
     override fun convert(list: List<PointF>): List<PointModel> =
         list.sortedWith(ComparatorPointF())
-            .map {
-                it.also { //todo костыль
-                    it.x *= 10
-                    it.y *= 10
-                }
-            }
             .mapIndexed { i, point ->
                 when (i) {
                     0 -> {
@@ -24,8 +18,8 @@ class PointModelConverterImpl : PointModelConverter {
                         PointModel(
                             point = point,
                             offset = PointF(
-                                (next.x - point.x) / COEFFICIENT,
-                                (next.y - point.y) / COEFFICIENT
+                                (next.x - point.x) / COEFFICIENT_X,
+                                (next.y - point.y) / COEFFICIENT_Y
                             )
                         )
                     }
@@ -34,8 +28,8 @@ class PointModelConverterImpl : PointModelConverter {
                         PointModel(
                             point = point,
                             offset = PointF(
-                                (point.x - prev.x) / COEFFICIENT,
-                                (point.y - prev.y) / COEFFICIENT
+                                (point.x - prev.x) / COEFFICIENT_X,
+                                (point.y - prev.y) / COEFFICIENT_Y
                             )
                         )
                     }
@@ -45,8 +39,8 @@ class PointModelConverterImpl : PointModelConverter {
                         PointModel(
                             point = point,
                             offset = PointF(
-                                (next.x - prev.x) / COEFFICIENT,
-                                (next.y - prev.y) / COEFFICIENT
+                                (next.x - prev.x) / COEFFICIENT_X,
+                                (next.y - prev.y) / COEFFICIENT_Y
                             )
                         )
                     }
@@ -67,6 +61,7 @@ class PointModelConverterImpl : PointModelConverter {
         /**
          * Коэффициент для расчета опорной точки, для отрисовки кривых
          */
-        private const val COEFFICIENT = 4
+        private const val COEFFICIENT_X = 2
+        private const val COEFFICIENT_Y = 4
     }
 }

@@ -64,6 +64,7 @@
         app:layout_constraintTop_toBottomOf="@+id/recycler_view" />
 
     <ru.sorokin.kirill.chartloader.presentation.view.ChartView
+        style="@style/ChartView"
         android:id="@+id/chart_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
