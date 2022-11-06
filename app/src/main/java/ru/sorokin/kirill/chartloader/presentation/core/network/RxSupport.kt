@@ -1,4 +1,4 @@
-package ru.sorokin.kirill.chartloader.presentation.network
+package ru.sorokin.kirill.chartloader.presentation.core.network
 
 import io.reactivex.Scheduler
 

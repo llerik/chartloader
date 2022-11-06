@@ -1,37 +1,45 @@
 package ru.sorokin.kirill.chartloader.presentation.main
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
-import android.widget.Toast
-import androidx.fragment.app.FragmentActivity
+import android.widget.ProgressBar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import ru.sorokin.kirill.chartloader.R
 import ru.sorokin.kirill.chartloader.data.converter.PointConverterImpl
-import ru.sorokin.kirill.chartloader.data.mapper.PointsApiMapper
 import ru.sorokin.kirill.chartloader.data.mapper.PointsApiMapperImpl
 import ru.sorokin.kirill.chartloader.data.parser.JacksonParserImpl
-import ru.sorokin.kirill.chartloader.data.parser.Parser
 import ru.sorokin.kirill.chartloader.data.repository.PointsRepositoryImpl
-import ru.sorokin.kirill.chartloader.domain.repository.PointsRepository
 import ru.sorokin.kirill.chartloader.presentation.chart.ChartActivity
-import ru.sorokin.kirill.chartloader.presentation.converter.PointModelConverter
-import ru.sorokin.kirill.chartloader.presentation.converter.PointModelConverterImpl
+import ru.sorokin.kirill.chartloader.presentation.core.network.RxSupportImpl
+import ru.sorokin.kirill.chartloader.presentation.core.resource.ResourceManagerImpl
+import ru.sorokin.kirill.chartloader.presentation.main.converter.PointModelConverterImpl
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
-import ru.sorokin.kirill.chartloader.presentation.network.RxSupport
-import ru.sorokin.kirill.chartloader.presentation.network.RxSupportImpl
+
 
 /**
  * todo
  *
  * @author Sorokin Kirill
  */
-class MainActivity : FragmentActivity(R.layout.main_activity) {
+class MainActivity : AppCompatActivity(R.layout.main_activity) {
     private lateinit var viewModel: MainViewModel
     private lateinit var button: Button
+    private lateinit var progressBar: ProgressBar
+    private lateinit var contantLayout: ViewGroup
+    private lateinit var textField: TextInputLayout
+    private lateinit var textInputEditor: TextInputEditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,9 +47,23 @@ class MainActivity : FragmentActivity(R.layout.main_activity) {
         viewModel.getProgressLiveData().observe(this, this::updateProgressBar)
         viewModel.getErrorLiveData().observe(this, this::onError)
         viewModel.getDataLiveData().observe(this, this::showChart)
+        viewModel.getButtonEnableLiveData().observe(this) { button.isEnabled = it }
+
         button = findViewById(R.id.button)
+        progressBar = findViewById(R.id.progress_bar)
+        contantLayout = findViewById(R.id.content_layout)
+        textField = findViewById(R.id.text_field)
+        textInputEditor = findViewById(R.id.text_input_editor)
+
+        textInputEditor.addTextChangedListener {
+            if (textField.isErrorEnabled) {
+                textField.isErrorEnabled = false
+            }
+        }
         button.setOnClickListener {
-            viewModel.requestPoints(100)//todo
+            textField.isErrorEnabled = false
+            hideKeyboard()
+            viewModel.buttonClick(textInputEditor.text.toString())
         }
     }
 
@@ -51,15 +73,29 @@ class MainActivity : FragmentActivity(R.layout.main_activity) {
     }
 
     private fun onError(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        Log.d(TAG, "onError: $message")
+        textField.error = message
+        textField.isErrorEnabled = true
     }
 
     private fun updateProgressBar(visible: Boolean) {
+        progressBar.visibility = visible.toVisibility()
+        contantLayout.visibility = (!visible).toVisibility()
+    }
 
+    private fun Boolean.toVisibility() = if (this) View.VISIBLE else View.GONE
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        var view = currentFocus
+        if (view == null) {
+            view = View(this)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     private fun factory(): ViewModelProvider.Factory {
-        //todo move to dagger
+        //can move to dagger
         val repository = PointsRepositoryImpl(
             PointConverterImpl(),
             PointsApiMapperImpl(
@@ -69,11 +105,12 @@ class MainActivity : FragmentActivity(R.layout.main_activity) {
         )
         val converter = PointModelConverterImpl()
         val rxSupport = RxSupportImpl()
+        val resourceManager = ResourceManagerImpl(applicationContext)
         return object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
                     @Suppress("UNCHECKED_CAST")
-                    return MainViewModel(repository, converter, rxSupport) as T
+                    return MainViewModel(repository, converter, resourceManager, rxSupport) as T
                 }
                 throw IllegalArgumentException("UNKNOWN VIEW MODEL CLASS")
             }

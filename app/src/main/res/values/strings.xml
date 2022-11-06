@@ -1,5 +1,9 @@
 <resources>
-    <string name="app_name">Табличка</string>
-    <string name="main_activity_title">Табличка</string>
+    <string name="app_name">График</string>
+    <string name="main_activity_title">График</string>
     <string name="main_button">Поехали</string>
+    <string name="inout_text_label">Введите число от 2 до 1000</string>
+    <string name="error_message_incorrect_number">Число должно быть больше 1 и не больше 1000</string>
+    <string name="error_message_input_empty">Введите число</string>
+    <string name="error_message_incorrect_answer">Что-то пошло не так. Попробуйте еще раз</string>
 </resources>

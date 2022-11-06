@@ -64,7 +64,6 @@ class ChartView @JvmOverloads constructor(
         this.isSmooth = isSmooth
 
         for ((i, point) in list.withIndex()) {
-
             if (i == 0) {
                 pathLine.moveTo(point.point.x, point.point.y)
             } else {

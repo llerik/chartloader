@@ -1,4 +1,4 @@
-package ru.sorokin.kirill.chartloader.presentation.converter
+package ru.sorokin.kirill.chartloader.presentation.main.converter
 
 import android.graphics.PointF
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel

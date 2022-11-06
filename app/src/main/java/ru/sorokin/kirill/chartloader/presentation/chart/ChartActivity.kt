@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import ru.sorokin.kirill.chartloader.R
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
@@ -14,19 +15,26 @@ import ru.sorokin.kirill.chartloader.presentation.view.ChartView
  *
  * @author Sorokin Kirill
  */
-class ChartActivity:  FragmentActivity(R.layout.chart_activity) {
+class ChartActivity:  AppCompatActivity(R.layout.chart_activity) {
 
     private lateinit var chartView: ChartView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+        }
         chartView = findViewById(R.id.chart_view)
 
         val parcelablesArray = intent.getParcelableArrayExtra(ARG_POINTS) ?: arrayOf()
         val models = parcelablesArray.asList().map { it as PointModel }
         Log.d(TAG, "onCreate: $models")
         chartView.setContent(models, false)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     companion object {

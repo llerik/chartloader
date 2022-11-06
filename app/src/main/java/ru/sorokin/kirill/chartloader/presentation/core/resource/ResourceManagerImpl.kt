@@ -1,0 +1,17 @@
+package ru.sorokin.kirill.chartloader.presentation.core.resource
+
+import android.content.Context
+
+/**
+ * todo
+ *
+ * @author Sorokin Kirill
+ */
+class ResourceManagerImpl(
+    private val context: Context
+): ResourceManager {
+
+    override fun getString(id: Int): String {
+        return context.resources.getString(id)
+    }
+}
