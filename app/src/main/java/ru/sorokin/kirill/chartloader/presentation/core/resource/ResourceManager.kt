@@ -14,4 +14,9 @@ interface ResourceManager {
      */
     fun getString(@StringRes id: Int): String
 
+    /**
+     * todo
+     */
+    fun getString(@StringRes id: Int, vararg args: Any): String
+
 }

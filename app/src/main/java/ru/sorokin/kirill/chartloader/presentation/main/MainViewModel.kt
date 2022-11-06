@@ -3,14 +3,13 @@ package ru.sorokin.kirill.chartloader.presentation.main
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
 import ru.sorokin.kirill.chartloader.R
 import ru.sorokin.kirill.chartloader.domain.repository.PointsRepository
 import ru.sorokin.kirill.chartloader.presentation.core.SingleLiveEvent
 import ru.sorokin.kirill.chartloader.presentation.core.network.RxSupport
 import ru.sorokin.kirill.chartloader.presentation.core.resource.ResourceManager
+import ru.sorokin.kirill.chartloader.presentation.core.viewmodel.CoreViewModel
 import ru.sorokin.kirill.chartloader.presentation.main.converter.PointModelConverter
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 
@@ -24,8 +23,8 @@ class MainViewModel(
     private val converter: PointModelConverter,
     private val resourceManager: ResourceManager,
     private val rxSupport: RxSupport
-) : ViewModel() {
-    private val rxDisposables = CompositeDisposable()
+) : CoreViewModel() {
+
     private val errorLiveData = MutableLiveData<String>()
     private val progressLiveData = MutableLiveData<Boolean>()
     private val buttonEnableLiveData = MutableLiveData<Boolean>()
@@ -70,9 +69,6 @@ class MainViewModel(
         }
     }
 
-    override fun onCleared() {
-        rxDisposables.dispose()
-    }
 
     private fun requestPoints(count: Int) {
         progressLiveData.value = true
@@ -85,7 +81,7 @@ class MainViewModel(
                     {
                         if (it.isEmpty()) {
                             errorLiveData.value =
-                                resourceManager.getString(R.string.error_message_incorrect_answer)
+                                resourceManager.getString(R.string.error_message_something_went_wrong)
                         } else {
                             Log.d(TAG, "requestPoints: $it")
                             dataLiveData.value = it
@@ -97,7 +93,7 @@ class MainViewModel(
                         Log.e(TAG, "requestPoints: ", it)
                         progressLiveData.value = false
                         errorLiveData.value =
-                            resourceManager.getString(R.string.error_message_incorrect_answer)
+                            resourceManager.getString(R.string.error_message_something_went_wrong)
                         buttonEnableLiveData.value = true
                     }
                 )
