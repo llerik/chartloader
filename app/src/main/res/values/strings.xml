@@ -14,4 +14,5 @@
     <string name="show">Посмотреть</string>
     <string name="show_image">Открыть изображение</string>
     <string name="error_show_image">Не найдено приложений для работы с изображениями</string>
+    <string name="toggle_smooth">Сглаживать график</string>
 </resources>

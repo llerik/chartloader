@@ -14,6 +14,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -33,6 +34,7 @@ import ru.sorokin.kirill.chartloader.presentation.view.ChartView
 class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
     private lateinit var viewModel: ChartViewModel
     private lateinit var chartView: ChartView
+    private lateinit var switchView: SwitchCompat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +50,10 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
         val models = parcelablesArray.asList().map { it as PointModel }
         Log.d(TAG, "onCreate: $models")
 
+        switchView = findViewById(R.id.switch_smooth)
+        switchView.setOnCheckedChangeListener { _, isChecked ->
+            chartView.setSmooth(isChecked)
+        }
         chartView = findViewById(R.id.chart_view)
         findViewById<RecyclerView>(R.id.recycler_view)?.apply {
             adapter = PointListAdapter(models)

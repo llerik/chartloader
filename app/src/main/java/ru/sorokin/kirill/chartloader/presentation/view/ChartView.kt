@@ -52,6 +52,15 @@ class ChartView @JvmOverloads constructor(
     private var scale = 1f
 
     /**
+     * Установить флаг сглаживания [isSmooth]
+     */
+    fun setSmooth(isSmooth: Boolean) {
+        this.isSmooth = isSmooth
+        Log.d(TAG, "setSmooth: $isSmooth")
+        updatePath()
+    }
+
+    /**
      * Установить список точек для формирования графика
      * @param list список точек
      * @param isSmooth сглаживание
@@ -60,11 +69,28 @@ class ChartView @JvmOverloads constructor(
         Log.d(TAG, "setContent: ")
         points.clear()
         points.addAll(list)
+        this.isSmooth = isSmooth
+        updatePath()
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        canvas.scale(scale, scale)
+        canvas.drawColor(Color.WHITE)
+        canvas.translate(distance.x, distance.y)
+
+
+        paint.style = Paint.Style.STROKE
+        canvas.drawPath(pathLine, paint)
+
+        paint.style = Paint.Style.FILL_AND_STROKE
+        canvas.drawPath(pathPoints, paint)
+    }
+
+    private fun updatePath() {
         pathLine.reset()
         pathPoints.reset()
-        this.isSmooth = isSmooth
-
-        for ((i, point) in list.withIndex()) {
+        for ((i, point) in points.withIndex()) {
             if (i == 0) {
                 pathLine.moveTo(point.point.x, point.point.y)
             } else {
@@ -88,20 +114,6 @@ class ChartView @JvmOverloads constructor(
         }
         Log.d(TAG, "setContent: distance: $distance")
         invalidate()
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-        canvas.scale(scale, scale)
-        canvas.drawColor(Color.WHITE)
-        canvas.translate(distance.x, distance.y)
-
-
-        paint.style = Paint.Style.STROKE
-        canvas.drawPath(pathLine, paint)
-
-        paint.style = Paint.Style.FILL_AND_STROKE
-        canvas.drawPath(pathPoints, paint)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -163,7 +175,7 @@ class ChartView @JvmOverloads constructor(
                 distancePoint = distance
                 scale = scaleFactor
                 smooth = isSmooth
-                setContent(getList(), isSmooth)
+                updatePath()
             }
         } else {
             super.onRestoreInstanceState(state)
