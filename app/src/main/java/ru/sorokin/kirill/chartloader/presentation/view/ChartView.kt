@@ -67,8 +67,7 @@ class ChartView @JvmOverloads constructor(
      */
     fun setContent(list: List<PointModel>, isSmooth: Boolean) {
         Log.d(TAG, "setContent: ")
-        points.clear()
-        points.addAll(list)
+        points.reset(list)
         this.isSmooth = isSmooth
         updatePath()
     }
@@ -175,11 +174,17 @@ class ChartView @JvmOverloads constructor(
                 distancePoint = distance
                 scale = scaleFactor
                 smooth = isSmooth
+                points.reset(getList())
                 updatePath()
             }
         } else {
             super.onRestoreInstanceState(state)
         }
+    }
+
+    private fun <T> MutableList<T>.reset(list: List<T>) {
+        clear()
+        addAll(list)
     }
 
     companion object {
