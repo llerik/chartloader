@@ -52,17 +52,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/point_view_holder_layout" />
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switch_smooth"
-        android:checked="true"
-        android:text="@string/toggle_smooth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/small"
-        android:layout_marginTop="@dimen/small"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recycler_view" />
-
     <ru.sorokin.kirill.chartloader.presentation.view.ChartView
         style="@style/ChartView"
         android:id="@+id/chart_view"
@@ -72,6 +61,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch_smooth" />
+        app:layout_constraintTop_toBottomOf="@+id/recycler_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

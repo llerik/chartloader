@@ -11,40 +11,11 @@ import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 class PointModelConverterImpl : PointModelConverter {
     override fun convert(list: List<PointF>): List<PointModel> =
         list.sortedWith(ComparatorPointF())
-            .mapIndexed { i, point ->
-                when (i) {
-                    0 -> {
-                        val next = list[1]
-                        PointModel(
-                            point = point,
-                            offset = PointF(
-                                (next.x - point.x) / COEFFICIENT_X,
-                                (next.y - point.y) / COEFFICIENT_Y
-                            )
-                        )
-                    }
-                    list.lastIndex -> {
-                        val prev = list[i - 1]
-                        PointModel(
-                            point = point,
-                            offset = PointF(
-                                (point.x - prev.x) / COEFFICIENT_X,
-                                (point.y - prev.y) / COEFFICIENT_Y
-                            )
-                        )
-                    }
-                    else -> {
-                        val next = list[i + 1]
-                        val prev = list[i - 1]
-                        PointModel(
-                            point = point,
-                            offset = PointF(
-                                (next.x - prev.x) / COEFFICIENT_X,
-                                (next.y - prev.y) / COEFFICIENT_Y
-                            )
-                        )
-                    }
-                }
+            .map {
+                PointModel(
+                    point = it,
+                    pointScaled = it,
+                )
             }
 
     private class ComparatorPointF : Comparator<PointF> {
@@ -55,13 +26,5 @@ class PointModelConverterImpl : PointModelConverter {
                 else -> 0
             }
         }
-    }
-
-    companion object {
-        /**
-         * Коэффициент для расчета опорной точки, для отрисовки кривых
-         */
-        private const val COEFFICIENT_X = 2
-        private const val COEFFICIENT_Y = 4
     }
 }

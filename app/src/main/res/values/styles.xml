@@ -14,5 +14,6 @@
 
     <style name="ChartView">
         <item name="chart_background">?attr/colorOnPrimary</item>
+        <item name="chart_line">?attr/colorPoint</item>
     </style>
 </resources>

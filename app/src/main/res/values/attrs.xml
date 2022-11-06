@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <attr name="colorPoint" format="reference" />
+
     <declare-styleable name="ChartView">
         <attr name="chart_background" format="reference"/>
+        <attr name="chart_line" format="reference"/>
     </declare-styleable>
 </resources>

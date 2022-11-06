@@ -8,13 +8,13 @@ import android.os.Parcelable
  * Модель точки для рисования
  *
  * @param point координаты точки
- * @param offset координата смещения для отрисовки кривой
+ * @param pointScaled координаты точки после изменения
  *
  * @author Sorokin Kirill
  */
 data class PointModel(
     val point: PointF,
-    val offset: PointF = PointF(0f, 0f)
+    val pointScaled: PointF,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         PointF(
@@ -30,8 +30,8 @@ data class PointModel(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeFloat(point.x)
         parcel.writeFloat(point.y)
-        parcel.writeFloat(offset.x)
-        parcel.writeFloat(offset.y)
+        parcel.writeFloat(pointScaled.x)
+        parcel.writeFloat(pointScaled.y)
     }
 
     override fun describeContents(): Int {

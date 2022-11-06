@@ -50,15 +50,11 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
         val models = parcelablesArray.asList().map { it as PointModel }
         Log.d(TAG, "onCreate: $models")
 
-        switchView = findViewById(R.id.switch_smooth)
-        switchView.setOnCheckedChangeListener { _, isChecked ->
-            chartView.setSmooth(isChecked)
-        }
         chartView = findViewById(R.id.chart_view)
         findViewById<RecyclerView>(R.id.recycler_view)?.apply {
             adapter = PointListAdapter(models)
         }
-        chartView.setContent(models, true)
+        chartView.setContent(models)
     }
 
     override fun onSupportNavigateUp(): Boolean {

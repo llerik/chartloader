@@ -49,45 +49,35 @@ class ChartView @JvmOverloads constructor(
         typedArray.recycle()
         color
     } ?: Color.WHITE
+    private val colorLine = attrs?.let {
+        val typedArray = context.obtainStyledAttributes(it, R.styleable.ChartView)
+        val color = typedArray.getColor(R.styleable.ChartView_chart_line, Color.GREEN)
+        typedArray.recycle()
+        color
+    } ?:  Color.GREEN
     private val points = mutableListOf<PointModel>()
     private val pathLine = Path()
     private val pathPoints = Path()
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         strokeWidth = DEFAULT_STROKE_WIDTH
-        color = Color.GREEN
+        color = colorLine
     }
     private var downTouch = false
-    private var isSmooth = false
     private var scaleRateX = 1f
     private var scaleRateY = 1f
 
     /**
-     * Установить флаг сглаживания [isSmooth]
+     * Установить список точек [list] для формирования графика
      */
-    fun setSmooth(isSmooth: Boolean) {
-        this.isSmooth = isSmooth
-        Log.d(TAG, "setSmooth: $isSmooth")
-        updatePath()
-    }
-
-    /**
-     * Установить список точек для формирования графика
-     * @param list список точек
-     * @param isSmooth сглаживание
-     */
-    fun setContent(list: List<PointModel>, isSmooth: Boolean) {
-        Log.d(TAG, "setContent: ")
+    fun setContent(list: List<PointModel>) {
+        Log.d(TAG, "setContent: $list")
         points.reset(list)
-        this.isSmooth = isSmooth
-        updatePath()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.drawColor(backgroundColor)
-        canvas.scale(scaleRateX, scaleRateY)
-        canvas.translate(distance.x, distance.y)
-
+        createPath()
         paint.style = Paint.Style.STROKE
         canvas.drawPath(pathLine, paint)
 
@@ -95,33 +85,80 @@ class ChartView @JvmOverloads constructor(
         canvas.drawPath(pathPoints, paint)
     }
 
-    private fun updatePath() {
+    private fun createPath() {
         pathLine.reset()
         pathPoints.reset()
         for ((i, point) in points.withIndex()) {
-            if (i == 0) {
-                pathLine.moveTo(point.point.x, point.point.y)
-            } else {
-                if (isSmooth) {
-                    val prev = points[i - 1]
-                    pathLine.cubicTo(
-                        prev.point.x + prev.offset.x,
-                        prev.point.y + prev.offset.y,
-                        point.point.x - point.offset.x,
-                        point.point.y - point.offset.y,
-                        point.point.x,
-                        point.point.y
-                    )
+            with(point.pointScaled) {
+                if (i == 0) {
+                    pathLine.moveTo(x, y)
                 } else {
-                    pathLine.lineTo(point.point.x, point.point.y)
+                    pathLine.lineTo(x, y)
+                }
+                pathPoints.addCircle(
+                    x,
+                    y,
+                    RADIUS,
+                    Path.Direction.CW
+                )
+            }
+        }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        scaleByDefault()
+        moveByDefault()
+
+        invalidate()
+    }
+
+    private fun moveByDefault() {
+        if (distance.x == 0f && distance.y == 0f) {
+            val chartRect = RectF(0f, 0f, 0f, 0f)
+            points.forEach { point ->
+                with(point.pointScaled) {
+                    if (x > chartRect.right) chartRect.right = x
+                    if (x < chartRect.left) chartRect.left = x
+                    if (y > chartRect.bottom) chartRect.bottom = y
+                    if (y < chartRect.top) chartRect.top = y
                 }
             }
-            pathPoints.addCircle(point.point.x, point.point.y, RADIUS, Path.Direction.CW)
-            if (distance.x > point.point.x) distance.x = point.point.x
-            if (distance.y < point.point.y) distance.y = point.point.y
+            val chartHeight = chartRect.bottom - chartRect.top
+            val chartWidth = chartRect.right - chartRect.left
+            distance.x = -chartRect.left - chartWidth / 2 + width / 2
+            distance.y = -chartRect.top - chartHeight / 2 + height / 2
+            points.forEach {
+                it.apply {
+                    pointScaled.x += distance.x
+                    pointScaled.y += distance.y
+                }
+            }
         }
-        Log.d(TAG, "setContent: distance: $distance")
-        invalidate()
+    }
+
+    private fun scaleByDefault() {
+        if (scaleRateX == 1f && scaleRateY == 1f) {
+            val chartRect = RectF(0f, 0f, 0f, 0f)
+            points.forEach { point ->
+                with(point.point) {
+                    if (x > chartRect.right) chartRect.right = x
+                    if (x < chartRect.left) chartRect.left = x
+                    if (y > chartRect.bottom) chartRect.bottom = y
+                    if (y < chartRect.top) chartRect.top = y
+                }
+            }
+            val chartHeight = chartRect.bottom - chartRect.top
+            val defaultScale = height / chartHeight
+            points.forEach {
+                it.apply {
+                    pointScaled.x = point.x * defaultScale
+                    pointScaled.y = point.y * defaultScale
+                }
+            }
+            scaleRateX = defaultScale
+            scaleRateY = defaultScale
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -153,46 +190,41 @@ class ChartView @JvmOverloads constructor(
         } else if (scaleRateX > MAX_SCALE) {
             scaleRateX = MAX_SCALE
         }
-        scaleRateY *= scaleFactor
-        if (scaleRateY < MIN_SCALE) {
-            scaleRateY = MIN_SCALE
-        } else if (scaleRateY > MAX_SCALE) {
-            scaleRateY = MAX_SCALE
-        }
-        Log.d(TAG, "onScaleChange: scaleFactor: $scaleFactor scaleRateX: $scaleRateX")
+        points.forEach { it.update() }
         invalidate()
     }
 
     override fun onMove(point: PointF) {
-        Log.d(TAG, "onMove: $point")
-        distance.x += point.x * 1 / scaleRateX
-        distance.y += point.y * 1 / scaleRateY
+        distance.x += point.x
+        distance.y += point.y
+
+        points.forEach { it.update() }
         invalidate()
     }
 
+    private fun PointModel.update() {
+        pointScaled.x = point.x * scaleRateX + distance.x
+        pointScaled.y = point.y * scaleRateY + distance.y
+    }
+
     override fun onSaveInstanceState(): Parcelable {
-        Log.d(TAG, "onSaveInstanceState: ")
         return SavedState(super.onSaveInstanceState()).apply {
             setList(points)
-            distance.x = distancePoint.x
-            distance.y = distancePoint.y
+            distancePoint = distance
             scaleFactorX = scaleRateX
             scaleFactorY = scaleRateY
-            smooth = isSmooth
         }
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
-        Log.d(TAG, "onRestoreInstanceState: ")
         if (state is SavedState) {
             super.onRestoreInstanceState(state.superState)
             with(state) {
-                distancePoint = distance
+                distance.x = distancePoint.x
+                distance.y = distancePoint.y
                 scaleRateX = scaleFactorX
                 scaleRateY = scaleFactorY
-                smooth = isSmooth
                 points.reset(getList())
-                updatePath()
             }
         } else {
             super.onRestoreInstanceState(state)
@@ -210,22 +242,22 @@ class ChartView @JvmOverloads constructor(
         /**
          * Радиус точки
          */
-        private const val RADIUS = 0.05F
+        private const val RADIUS = 5f
 
         /**
          * Максимальное увеличение графика
          */
-        private const val MAX_SCALE = 100f
+        private const val MAX_SCALE = 10000f
 
         /**
          * Минимальное увеличение (отдаление) графика
          */
-        private const val MIN_SCALE = 0.1f
+        private const val MIN_SCALE = 0.01f
 
         /**
          * Толщина строки
          */
-        private const val DEFAULT_STROKE_WIDTH = 0.05f
+        private const val DEFAULT_STROKE_WIDTH = 5f
 
         /**
          * Минимальный размер (dp) для определения жеста изменения размера
@@ -241,7 +273,6 @@ class ChartView @JvmOverloads constructor(
         var scaleFactorX = 0f
         var scaleFactorY = 0f
         var distancePoint = PointF(0f, 0f)
-        var smooth = false
 
         constructor(parcel: Parcel?) : super(parcel) {
             parcel?.apply {
@@ -249,7 +280,6 @@ class ChartView @JvmOverloads constructor(
                 scaleFactorX = readFloat()
                 scaleFactorY = readFloat()
                 distancePoint = PointF.CREATOR.createFromParcel(this)
-                smooth = readInt() != 0
             }
         }
 
@@ -261,7 +291,6 @@ class ChartView @JvmOverloads constructor(
             parcel.writeFloat(scaleFactorX)
             parcel.writeFloat(scaleFactorY)
             parcel.writeParcelable(distancePoint, PointF.PARCELABLE_WRITE_RETURN_VALUE)
-            parcel.writeInt(if (smooth) 1 else 0)
         }
 
         fun getList() = points
