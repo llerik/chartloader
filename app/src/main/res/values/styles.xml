@@ -10,6 +10,8 @@
         <item name="android:paddingEnd">5dp</item>
         <item name="android:paddingBottom">2dp</item>
         <item name="android:textAlignment">center</item>
+        <item name="android:maxLength">10</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
     <style name="ChartView">
