@@ -14,7 +14,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
@@ -34,7 +33,6 @@ import ru.sorokin.kirill.chartloader.presentation.view.ChartView
 class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
     private lateinit var viewModel: ChartViewModel
     private lateinit var chartView: ChartView
-    private lateinit var switchView: SwitchCompat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +53,8 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
             adapter = PointListAdapter(models)
         }
         chartView.setContent(models)
+        
+        findViewById<View>(R.id.header_table).setOnClickListener { chartView.switchSmoothMode() }
     }
 
     override fun onSupportNavigateUp(): Boolean {

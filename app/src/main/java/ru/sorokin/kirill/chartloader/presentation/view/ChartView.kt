@@ -65,6 +65,15 @@ class ChartView @JvmOverloads constructor(
     private var downTouch = false
     private var scaleRateX = 1f
     private var scaleRateY = 1f
+    private var isSmoothEnable = false
+
+    /**
+     * Изменить флаг доступности сглаживание
+     */
+    fun switchSmoothMode() {
+        isSmoothEnable = !isSmoothEnable
+        invalidate()
+    }
 
     /**
      * Установить список точек [list] для формирования графика
@@ -93,18 +102,20 @@ class ChartView @JvmOverloads constructor(
                 if (i == 0) {
                     pathLine.moveTo(point.x, point.y)
                 } else {
-                    //ломаная линия
-                    pathLine.lineTo(point.x, point.y)
-
-                    //плавная линия
-//                    pathLine.cubicTo(
-//                        firstNormal.x,
-//                        firstNormal.y,
-//                        secondNormal.x,
-//                        secondNormal.y,
-//                        point.x,
-//                        point.y
-//                    )
+                    if (isSmoothEnable) {
+                        //плавная линия
+                        pathLine.cubicTo(
+                            firstNormal.x,
+                            firstNormal.y,
+                            secondNormal.x,
+                            secondNormal.y,
+                            point.x,
+                            point.y
+                        )
+                    } else {
+                        //ломаная линия
+                        pathLine.lineTo(point.x, point.y)
+                    }
                 }
                 pathPoints.addCircle(
                     point.x,
@@ -223,6 +234,7 @@ class ChartView @JvmOverloads constructor(
             distancePoint = distance
             scaleFactorX = scaleRateX
             scaleFactorY = scaleRateY
+            isSmooth = isSmoothEnable
         }
     }
 
@@ -234,6 +246,7 @@ class ChartView @JvmOverloads constructor(
                 distance.y = distancePoint.y
                 scaleRateX = scaleFactorX
                 scaleRateY = scaleFactorY
+                isSmoothEnable = isSmooth
                 points.reset(getList())
             }
         } else {
@@ -283,6 +296,7 @@ class ChartView @JvmOverloads constructor(
         var scaleFactorX = 1f
         var scaleFactorY = 1f
         var distancePoint = PointF()
+        var isSmooth = false
 
         constructor(parcel: Parcel?) : super(parcel) {
             parcel?.apply {
@@ -290,6 +304,7 @@ class ChartView @JvmOverloads constructor(
                 scaleFactorX = readFloat()
                 scaleFactorY = readFloat()
                 distancePoint = PointF.CREATOR.createFromParcel(this)
+                isSmooth = readInt() != 0
             }
         }
 
@@ -301,6 +316,7 @@ class ChartView @JvmOverloads constructor(
             parcel.writeFloat(scaleFactorX)
             parcel.writeFloat(scaleFactorY)
             parcel.writeParcelable(distancePoint, PointF.PARCELABLE_WRITE_RETURN_VALUE)
+            parcel.writeInt(if (isSmooth) 1 else 0)
         }
 
         fun getList() = points
