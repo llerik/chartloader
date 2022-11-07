@@ -42,7 +42,7 @@ class ChartView @JvmOverloads constructor(
         )
     )
     private val moveGestureDetector = GestureDetector(context, MoveGestureListener(this))
-    private val distance = PointF(0f, 0f)
+    private val distance = PointF()
     private val backgroundColor = attrs?.let {
         val typedArray = context.obtainStyledAttributes(it, R.styleable.ChartView)
         val color = typedArray.getColor(R.styleable.ChartView_chart_background, Color.WHITE)
@@ -277,7 +277,7 @@ class ChartView @JvmOverloads constructor(
         private var points = mutableListOf<PointModel>()
         var scaleFactorX = 1f
         var scaleFactorY = 1f
-        var distancePoint = PointF(0f, 0f)
+        var distancePoint = PointF()
 
         constructor(parcel: Parcel?) : super(parcel) {
             parcel?.apply {
