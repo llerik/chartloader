@@ -54,7 +54,7 @@ class ChartView @JvmOverloads constructor(
         val color = typedArray.getColor(R.styleable.ChartView_chart_line, Color.GREEN)
         typedArray.recycle()
         color
-    } ?:  Color.GREEN
+    } ?: Color.GREEN
     private val points = mutableListOf<PointModel>()
     private val pathLine = Path()
     private val pathPoints = Path()
@@ -88,16 +88,27 @@ class ChartView @JvmOverloads constructor(
     private fun createPath() {
         pathLine.reset()
         pathPoints.reset()
-        for ((i, point) in points.withIndex()) {
-            with(point.point) {
+        for ((i, model) in points.withIndex()) {
+            with(model) {
                 if (i == 0) {
-                    pathLine.moveTo(x, y)
+                    pathLine.moveTo(point.x, point.y)
                 } else {
-                    pathLine.lineTo(x, y)
+                    //ломаная линия
+                    pathLine.lineTo(point.x, point.y)
+
+                    //плавная линия
+//                    pathLine.cubicTo(
+//                        firstNormal.x,
+//                        firstNormal.y,
+//                        secondNormal.x,
+//                        secondNormal.y,
+//                        point.x,
+//                        point.y
+//                    )
                 }
                 pathPoints.addCircle(
-                    x,
-                    y,
+                    point.x,
+                    point.y,
                     RADIUS,
                     Path.Direction.CW
                 )
@@ -129,10 +140,7 @@ class ChartView @JvmOverloads constructor(
             distance.x = -chartRect.left - chartWidth / 2 + width / 2
             distance.y = -chartRect.top - chartHeight / 2 + height / 2
             points.forEach {
-                it.apply {
-                    point.x += distance.x
-                    point.y += distance.y
-                }
+                it.move(distance)
             }
             distance.x = 0f
             distance.y = 0f
@@ -153,10 +161,7 @@ class ChartView @JvmOverloads constructor(
             val chartHeight = chartRect.bottom - chartRect.top
             val defaultScale = height / chartHeight
             points.forEach {
-                it.apply {
-                    point.x = point.x * defaultScale
-                    point.y = point.y * defaultScale
-                }
+                it.scale(PointF(defaultScale, defaultScale))
             }
             scaleRateX = 1f
             scaleRateY = 1f
@@ -208,8 +213,8 @@ class ChartView @JvmOverloads constructor(
     }
 
     private fun PointModel.update() {
-        point.x = point.x * scaleRateX + distance.x
-        point.y = point.y * scaleRateY + distance.y
+        scale(PointF(scaleRateX, scaleRateY))
+        move(distance)
     }
 
     override fun onSaveInstanceState(): Parcelable {
