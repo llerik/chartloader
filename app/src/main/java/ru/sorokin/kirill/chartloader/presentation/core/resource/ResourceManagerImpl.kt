@@ -3,7 +3,9 @@ package ru.sorokin.kirill.chartloader.presentation.core.resource
 import android.content.Context
 
 /**
- * todo
+ * Менеджер ресурсов
+ *
+ * @param context контекст приложения
  *
  * @author Sorokin Kirill
  */

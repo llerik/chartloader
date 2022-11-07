@@ -26,7 +26,7 @@ import ru.sorokin.kirill.chartloader.presentation.models.SuccessSaveImageModel
 import ru.sorokin.kirill.chartloader.presentation.view.ChartView
 
 /**
- * todo
+ * Экран графика
  *
  * @author Sorokin Kirill
  */
@@ -53,7 +53,9 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
             adapter = PointListAdapter(models)
         }
         chartView.setContent(models)
-        
+
+        //эксперементальный функционал
+        //"найдёт лишь тот, кто знает, где он" (с)
         findViewById<View>(R.id.header_table).setOnClickListener { chartView.switchSmoothMode() }
     }
 
@@ -133,7 +135,6 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
             .show()
     }
 
-
     private fun getBitmapFromView(view: View): Bitmap {
         val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -150,13 +151,13 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
     companion object {
         private const val TAG = "ChartActivity"
         private const val ARG_POINTS = "points"
-        private const val REQUEST_ID = 111;
+        private const val REQUEST_ID = 111
 
         /**
-         * todo
+         * Получить [Intent] для запуска экрана с графиком
          *
-         * @param context
-         * @param points
+         * @param context контекст экрана
+         * @param points список моделей точек
          */
         fun newIntent(context: Context, points: List<PointModel>): Intent =
             Intent(context, ChartActivity::class.java).apply {

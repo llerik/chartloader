@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 /**
- * todo
+ * Фабрика провайдеров ViewModel
+ *
+ * @param supplier вспомогательный колбэк создания экземпляра ViewModel
  *
  * @author Sorokin Kirill
  */

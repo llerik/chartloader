@@ -33,6 +33,9 @@ data class PointModel(
         )
     )
 
+    /**
+     * Сдвинуть точку на величину [diff]
+     */
     fun move(diff: PointF) {
         point.x += diff.x
         point.y += diff.y
@@ -44,6 +47,9 @@ data class PointModel(
         secondNormal.y += diff.y
     }
 
+    /**
+     * Увеличить координаты на величину [factor]
+     */
     fun scale(factor: PointF) {
         point.x *= factor.x
         point.y *= factor.y

@@ -7,7 +7,10 @@ import ru.sorokin.kirill.chartloader.data.mapper.PointsApiMapper
 import ru.sorokin.kirill.chartloader.domain.repository.PointsRepository
 
 /**
- * todo
+ * Репозиторий получения точек
+ *
+ * @param converter конвертер моделей
+ * @param apiMapper apiMapper запроса точек
  *
  * @author Sorokin Kirill
  */

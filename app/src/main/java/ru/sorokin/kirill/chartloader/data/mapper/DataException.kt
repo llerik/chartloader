@@ -1,7 +1,9 @@
 package ru.sorokin.kirill.chartloader.data.mapper
 
 /**
- * todo
+ * Исключение data слоя
+ *
+ * @param message сообщение об ошибке
  *
  * @author Sorokin Kirill
  */

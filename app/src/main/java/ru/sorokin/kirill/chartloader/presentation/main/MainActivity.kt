@@ -27,7 +27,7 @@ import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 
 
 /**
- * todo
+ * Главный экран
  *
  * @author Sorokin Kirill
  */

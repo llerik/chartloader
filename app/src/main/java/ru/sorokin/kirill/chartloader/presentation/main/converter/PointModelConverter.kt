@@ -4,13 +4,13 @@ import android.graphics.PointF
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 
 /**
- * todo
+ * Конвертер сущностей из domain слоя в сущности presentation слоя
  *
  * @author Sorokin Kirill
  */
 interface PointModelConverter {
     /**
-     * todo
+     * Сконвертировать список моделей [list]
      */
     fun convert(list: List<PointF>): List<PointModel>
 

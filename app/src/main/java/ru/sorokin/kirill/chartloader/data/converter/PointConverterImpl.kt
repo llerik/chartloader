@@ -4,11 +4,11 @@ import android.graphics.PointF
 import ru.sorokin.kirill.chartloader.data.models.PointsEntity
 
 /**
- * todo
+ * Конвертер моделей
  *
  * @author Sorokin Kirill
  */
-class PointConverterImpl(): PointConverter {
+class PointConverterImpl : PointConverter {
 
     override fun convert(entity: PointsEntity): List<PointF> {
         return entity.points.map {

@@ -4,12 +4,15 @@ import android.graphics.PointF
 import ru.sorokin.kirill.chartloader.data.models.PointsEntity
 
 /**
- * todo
+ * Конвертер моделей
  *
  * @author Sorokin Kirill
  */
 interface PointConverter {
 
+    /**
+     * Конвертировать модель [entity] из Data слоя в модель Domain слоя
+     */
     fun convert(entity: PointsEntity): List<PointF>
 
 }

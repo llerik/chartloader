@@ -6,7 +6,7 @@ import kotlin.math.abs
 import kotlin.math.sqrt
 
 /**
- * todo
+ * Конвертер сущностей из domain слоя в сущности presentation слоя
  *
  * @author Sorokin Kirill
  */
@@ -33,6 +33,12 @@ class PointModelConverterImpl : PointModelConverter {
         }
     }
 
+    /**
+     * Найти пару нормалей для построения кривой безье
+     *
+     * @param pointA точка A
+     * @param pointB точка B
+     */
     private fun findNormalPoints(
         pointA: PointF,
         pointB: PointF
@@ -42,12 +48,22 @@ class PointModelConverterImpl : PointModelConverter {
             (pointB.x + pointA.x) / 2,
             (pointB.y + pointA.y) / 2
         )
-        val direction = true//pointB.y < pointA.y
+        val direction = pointB.y < pointA.y
         val first = findNormalPointMiddle(pointA, pointC, direction)
+        //val first = findNormalPoint(pointA, pointC, direction)
         val second = findNormalPointMiddle(pointC, pointB, !direction)
+        //val second = findNormalPoint(pointC, pointB, !direction)
         return first to second
     }
 
+    /**
+     * Найти точку нормали отведенную от точки A
+     *
+     * @param pointA координаты точки А
+     * @param pointB координаты точки B
+     * @param direction направление нормали
+     * @param defaultLength длина нормали по умолчанию
+     */
     private fun findNormalPoint(
         pointA: PointF,
         pointB: PointF,
@@ -78,6 +94,14 @@ class PointModelConverterImpl : PointModelConverter {
         )
     }
 
+    /**
+     * Найти точку нормали отведенную от середины отрезка AD
+     *
+     * @param pointA координаты точки А
+     * @param pointD координаты точки D
+     * @param direction направление нормали
+     * @param defaultLength длина нормали по умолчанию
+     */
     private fun findNormalPointMiddle(
         pointA: PointF,
         pointD: PointF,
@@ -113,6 +137,9 @@ class PointModelConverterImpl : PointModelConverter {
         )
     }
 
+    /**
+     * Comparator точек для упорядочивания по координате Х
+     */
     private class ComparatorPointF : Comparator<PointF> {
         override fun compare(o1: PointF, o2: PointF): Int {
             return when {

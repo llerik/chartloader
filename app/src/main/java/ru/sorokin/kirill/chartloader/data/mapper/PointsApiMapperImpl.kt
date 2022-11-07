@@ -8,7 +8,10 @@ import ru.sorokin.kirill.chartloader.data.models.PointsEntity
 import ru.sorokin.kirill.chartloader.data.parser.Parser
 
 /**
- * todo
+ * ApiMapper запроса точек
+ *
+ * @param parser парсер ответа от бэка
+ * @param okHttpClient клиент для выполнения запроса к бэку
  *
  * @author Sorokin Kirill
  */

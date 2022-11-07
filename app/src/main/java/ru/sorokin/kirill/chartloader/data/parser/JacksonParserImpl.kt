@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 
 
 /**
- * todo
+ * Реализация парсера на основе Jackson
  *
  * @author Sorokin Kirill
  */

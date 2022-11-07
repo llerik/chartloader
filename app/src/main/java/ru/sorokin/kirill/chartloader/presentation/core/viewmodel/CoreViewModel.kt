@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 
 /**
- * todo
+ * Базовая ViewModel с поддержкой сохранения и очистки Rx Disposables
  *
  * @author Sorokin Kirill
  */

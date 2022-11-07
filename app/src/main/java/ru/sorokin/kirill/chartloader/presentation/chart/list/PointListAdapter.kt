@@ -7,7 +7,9 @@ import ru.sorokin.kirill.chartloader.R
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 
 /**
- * todo
+ * Адаптер списка точек для таблицы
+ *
+ * @param items список моделей точек
  *
  * @author Sorokin Kirill
  */
@@ -26,6 +28,5 @@ class PointListAdapter(
     }
 
     override fun getItemCount() = items.size
-
 
 }

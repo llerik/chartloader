@@ -1,23 +1,23 @@
 package ru.sorokin.kirill.chartloader.data.parser
 
 /**
- * todo
+ * Интерфейс парсера
  *
  * @author Sorokin Kirill
  */
 interface Parser {
     /**
-     * todo
+     * Получить из строки объект
      *
-     * @param value
-     * @param clazz
+     * @param value исходная строка
+     * @param clazz класс объекта результата
      */
     fun <T> parse(value: String, clazz: Class<T>): T
 
     /**
-     * todo
+     * Преобразовать объект в строку
      *
-     * @param obj
+     * @param obj объект
      */
     fun <T> serialize(obj: T): String
 }

@@ -14,7 +14,12 @@ import ru.sorokin.kirill.chartloader.presentation.main.converter.PointModelConve
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 
 /**
- * todo
+ * ViewModel главного экрана
+ *
+ * @param repository Репозиторий получения точек
+ * @param converter Конвертер сущностей из domain слоя в сущности presentation слоя
+ * @param resourceManager Менеджер ресурсов
+ * @param rxSupport Планировщик потоков
  *
  * @author Sorokin Kirill
  */
@@ -31,26 +36,27 @@ class MainViewModel(
     private val dataLiveData = SingleLiveEvent<List<PointModel>>()
 
     /**
-     * [LiveData] todo
+     * [LiveData] получения ошибки
      */
     fun getErrorLiveData(): LiveData<String> = errorLiveData
 
     /**
-     * [LiveData] todo
+     * [LiveData] отображения прогресса
      */
     fun getProgressLiveData(): LiveData<Boolean> = progressLiveData
+
     /**
-     * [LiveData] todo
+     * [LiveData] доступности кнопки для нажатия
      */
     fun getButtonEnableLiveData(): LiveData<Boolean> = buttonEnableLiveData
 
     /**
-     * [LiveData] todo
+     * [LiveData] получения данных
      */
     fun getDataLiveData(): LiveData<List<PointModel>> = dataLiveData
 
     /**
-     * todo
+     * Нажата кнопка, когда в поле ввода введен текст [text]
      */
     fun buttonClick(text: String) {
         buttonEnableLiveData.value = false
@@ -68,7 +74,6 @@ class MainViewModel(
             }
         }
     }
-
 
     private fun requestPoints(count: Int) {
         progressLiveData.value = true
@@ -103,5 +108,4 @@ class MainViewModel(
     companion object {
         private const val TAG = "MainViewModel"
     }
-
 }

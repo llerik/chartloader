@@ -17,7 +17,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * todo
+ * ViewModel экрана с графиком
+ *
+ * @param resourceManager менеджер ресурсов
  *
  * @author Sorokin Kirill
  */
@@ -29,15 +31,18 @@ class ChartViewModel(
     private val errorLiveData = SingleLiveEvent<String>()
 
     /**
-     * [LiveData] todo
+     * [LiveData] успешного сохранения изображения
      */
     fun getSuccessLiveData(): LiveData<SuccessSaveImageModel> = successLiveData
 
     /**
-     * [LiveData] todo
+     * [LiveData] ошибки сохранения изображения
      */
     fun getErrorLiveData(): LiveData<String> = errorLiveData
 
+    /**
+     * Сохранить [bitmap] в файл
+     */
     fun saveToFile(bitmap: Bitmap) {
         var fOut: OutputStream? = null
         try {

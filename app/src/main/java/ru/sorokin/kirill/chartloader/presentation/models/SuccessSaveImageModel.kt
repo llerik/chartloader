@@ -1,7 +1,11 @@
 package ru.sorokin.kirill.chartloader.presentation.models
 
 /**
- * todo
+ * Модель сообщения об успешном сохранении изображения
+ *
+ * @param message текст сообщения
+ * @param buttonName название кнопки
+ * @param path путь к файлу
  *
  * @author Sorokin Kirill
  */

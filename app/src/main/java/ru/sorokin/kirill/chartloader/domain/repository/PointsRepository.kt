@@ -4,12 +4,15 @@ import android.graphics.PointF
 import androidx.annotation.WorkerThread
 
 /**
- * todo
+ * Репозиторий получения точек
  *
  * @author Sorokin Kirill
  */
 interface PointsRepository {
 
+    /**
+     * Получить набор точек в количестве [count]
+     */
     @WorkerThread
     fun getPoints(count: Int): List<PointF>
 

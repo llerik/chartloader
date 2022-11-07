@@ -8,7 +8,9 @@ import ru.sorokin.kirill.chartloader.R
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 
 /**
- * todo
+ * ViewHolder столбца таблицы
+ *
+ * @param itemView view элемента
  *
  * @author Sorokin Kirill
  */
@@ -18,7 +20,7 @@ class PointViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val coordinateY = itemView.findViewById<TextView>(R.id.coordinate_y)
 
     /**
-     * todo
+     * Установить данные из модели [model]
      */
     fun bindModel(model: PointModel) {
         with(model.point) {
@@ -31,5 +33,4 @@ class PointViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     companion object {
         private const val TAG = "PointViewHolder"
     }
-
 }

@@ -1,6 +1,5 @@
 package ru.sorokin.kirill.chartloader.presentation.view.scale
 
-import android.util.Log
 import android.view.ScaleGestureDetector
 import kotlin.math.abs
 

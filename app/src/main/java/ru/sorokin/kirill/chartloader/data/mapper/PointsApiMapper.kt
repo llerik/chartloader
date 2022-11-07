@@ -4,12 +4,17 @@ import androidx.annotation.WorkerThread
 import ru.sorokin.kirill.chartloader.data.models.PointsEntity
 
 /**
- * todo
+ * ApiMapper запроса точек
  *
  * @author Sorokin Kirill
  */
 interface PointsApiMapper {
 
+    /**
+     * Получить модель с набором точек
+     *
+     * @param count количесто точек
+     */
     @Throws(DataException::class)
     @WorkerThread
     fun getPoints(count: Int): PointsEntity
