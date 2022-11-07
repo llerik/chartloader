@@ -15,13 +15,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import ru.sorokin.kirill.chartloader.R
 import ru.sorokin.kirill.chartloader.presentation.chart.list.PointListAdapter
 import ru.sorokin.kirill.chartloader.presentation.core.resource.ResourceManagerImpl
+import ru.sorokin.kirill.chartloader.presentation.core.viewmodel.ViewModelProviderFactory
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 import ru.sorokin.kirill.chartloader.presentation.models.SuccessSaveImageModel
 import ru.sorokin.kirill.chartloader.presentation.view.ChartView
@@ -141,18 +141,10 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
         return bitmap
     }
 
-    private fun factory(): ViewModelProvider.Factory {
-        return object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                if (modelClass.isAssignableFrom(ChartViewModel::class.java)) {
-                    @Suppress("UNCHECKED_CAST")
-                    return ChartViewModel(
-                        ResourceManagerImpl(applicationContext)
-                    ) as T
-                }
-                throw IllegalArgumentException("UNKNOWN VIEW MODEL CLASS")
-            }
-        }
+    private fun factory() = ViewModelProviderFactory<ChartViewModel> {
+        ChartViewModel(
+            ResourceManagerImpl(applicationContext)
+        )
     }
 
     companion object {

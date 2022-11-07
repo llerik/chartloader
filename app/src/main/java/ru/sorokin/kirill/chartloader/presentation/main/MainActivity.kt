@@ -1,7 +1,5 @@
 package ru.sorokin.kirill.chartloader.presentation.main
 
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,7 +9,6 @@ import android.widget.Button
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -24,6 +21,7 @@ import ru.sorokin.kirill.chartloader.data.repository.PointsRepositoryImpl
 import ru.sorokin.kirill.chartloader.presentation.chart.ChartActivity
 import ru.sorokin.kirill.chartloader.presentation.core.network.RxSupportImpl
 import ru.sorokin.kirill.chartloader.presentation.core.resource.ResourceManagerImpl
+import ru.sorokin.kirill.chartloader.presentation.core.viewmodel.ViewModelProviderFactory
 import ru.sorokin.kirill.chartloader.presentation.main.converter.PointModelConverterImpl
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 
@@ -94,7 +92,7 @@ class MainActivity : AppCompatActivity(R.layout.main_activity) {
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    private fun factory(): ViewModelProvider.Factory {
+    private fun factory() = ViewModelProviderFactory<MainViewModel> {
         //can move to dagger
         val repository = PointsRepositoryImpl(
             PointConverterImpl(),
@@ -106,15 +104,7 @@ class MainActivity : AppCompatActivity(R.layout.main_activity) {
         val converter = PointModelConverterImpl()
         val rxSupport = RxSupportImpl()
         val resourceManager = ResourceManagerImpl(applicationContext)
-        return object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-                    @Suppress("UNCHECKED_CAST")
-                    return MainViewModel(repository, converter, resourceManager, rxSupport) as T
-                }
-                throw IllegalArgumentException("UNKNOWN VIEW MODEL CLASS")
-            }
-        }
+        MainViewModel(repository, converter, resourceManager, rxSupport)
     }
 
     companion object {
