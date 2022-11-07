@@ -89,7 +89,7 @@ class ChartView @JvmOverloads constructor(
         pathLine.reset()
         pathPoints.reset()
         for ((i, point) in points.withIndex()) {
-            with(point.pointScaled) {
+            with(point.point) {
                 if (i == 0) {
                     pathLine.moveTo(x, y)
                 } else {
@@ -117,7 +117,7 @@ class ChartView @JvmOverloads constructor(
         if (distance.x == 0f && distance.y == 0f) {
             val chartRect = RectF(0f, 0f, 0f, 0f)
             points.forEach { point ->
-                with(point.pointScaled) {
+                with(point.point) {
                     if (x > chartRect.right) chartRect.right = x
                     if (x < chartRect.left) chartRect.left = x
                     if (y > chartRect.bottom) chartRect.bottom = y
@@ -130,10 +130,12 @@ class ChartView @JvmOverloads constructor(
             distance.y = -chartRect.top - chartHeight / 2 + height / 2
             points.forEach {
                 it.apply {
-                    pointScaled.x += distance.x
-                    pointScaled.y += distance.y
+                    point.x += distance.x
+                    point.y += distance.y
                 }
             }
+            distance.x = 0f
+            distance.y = 0f
         }
     }
 
@@ -152,12 +154,12 @@ class ChartView @JvmOverloads constructor(
             val defaultScale = height / chartHeight
             points.forEach {
                 it.apply {
-                    pointScaled.x = point.x * defaultScale
-                    pointScaled.y = point.y * defaultScale
+                    point.x = point.x * defaultScale
+                    point.y = point.y * defaultScale
                 }
             }
-            scaleRateX = defaultScale
-            scaleRateY = defaultScale
+            scaleRateX = 1f
+            scaleRateY = 1f
         }
     }
 
@@ -191,6 +193,7 @@ class ChartView @JvmOverloads constructor(
             scaleRateX = MAX_SCALE
         }
         points.forEach { it.update() }
+        scaleRateX = 1f
         invalidate()
     }
 
@@ -199,12 +202,14 @@ class ChartView @JvmOverloads constructor(
         distance.y += point.y
 
         points.forEach { it.update() }
+        distance.x = 0f
+        distance.y = 0f
         invalidate()
     }
 
     private fun PointModel.update() {
-        pointScaled.x = point.x * scaleRateX + distance.x
-        pointScaled.y = point.y * scaleRateY + distance.y
+        point.x = point.x * scaleRateX + distance.x
+        point.y = point.y * scaleRateY + distance.y
     }
 
     override fun onSaveInstanceState(): Parcelable {
@@ -270,8 +275,8 @@ class ChartView @JvmOverloads constructor(
      */
     private class SavedState : BaseSavedState {
         private var points = mutableListOf<PointModel>()
-        var scaleFactorX = 0f
-        var scaleFactorY = 0f
+        var scaleFactorX = 1f
+        var scaleFactorY = 1f
         var distancePoint = PointF(0f, 0f)
 
         constructor(parcel: Parcel?) : super(parcel) {

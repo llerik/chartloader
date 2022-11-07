@@ -13,8 +13,7 @@ class PointModelConverterImpl : PointModelConverter {
         list.sortedWith(ComparatorPointF())
             .map {
                 PointModel(
-                    point = it,
-                    pointScaled = it,
+                    point = it
                 )
             }
 
