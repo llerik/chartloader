@@ -1,6 +1,5 @@
 package ru.sorokin.kirill.chartloader.presentation.main
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Single
@@ -12,6 +11,7 @@ import ru.sorokin.kirill.chartloader.presentation.core.resource.ResourceManager
 import ru.sorokin.kirill.chartloader.presentation.core.viewmodel.CoreViewModel
 import ru.sorokin.kirill.chartloader.presentation.main.converter.PointModelConverter
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
+import ru.sorokin.kirill.chartloader.utils.Logger
 
 /**
  * ViewModel главного экрана
@@ -88,14 +88,14 @@ class MainViewModel(
                             errorLiveData.value =
                                 resourceManager.getString(R.string.error_message_something_went_wrong)
                         } else {
-                            Log.d(TAG, "requestPoints: $it")
+                            Logger.d(TAG, "requestPoints: $it")
                             dataLiveData.value = it
                         }
                         progressLiveData.value = false
                         buttonEnableLiveData.value = true
                     },
                     {
-                        Log.e(TAG, "requestPoints: ", it)
+                        Logger.e(TAG, "requestPoints: ", it)
                         progressLiveData.value = false
                         errorLiveData.value =
                             resourceManager.getString(R.string.error_message_something_went_wrong)

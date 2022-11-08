@@ -8,7 +8,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -24,6 +23,7 @@ import ru.sorokin.kirill.chartloader.presentation.core.viewmodel.ViewModelProvid
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 import ru.sorokin.kirill.chartloader.presentation.models.SuccessSaveImageModel
 import ru.sorokin.kirill.chartloader.presentation.view.ChartView
+import ru.sorokin.kirill.chartloader.utils.Logger
 
 /**
  * Экран графика
@@ -46,7 +46,7 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
 
         val parcelablesArray = intent.getParcelableArrayExtra(ARG_POINTS) ?: arrayOf()
         val models = parcelablesArray.asList().map { it as PointModel }
-        Log.d(TAG, "onCreate: $models")
+        Logger.d(TAG, "onCreate: $models")
 
         chartView = findViewById(R.id.chart_view)
         findViewById<RecyclerView>(R.id.recycler_view)?.apply {
@@ -123,7 +123,7 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
                     if (it.resolveActivity(packageManager) != null) {
                         startActivity(it)
                     } else {
-                        Log.w(TAG, "activity not resolved: ")
+                        Logger.w(TAG, "activity not resolved: ")
                         Toast.makeText(
                             this,
                             R.string.error_show_image,

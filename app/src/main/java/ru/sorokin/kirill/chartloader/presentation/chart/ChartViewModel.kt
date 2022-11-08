@@ -2,13 +2,13 @@ package ru.sorokin.kirill.chartloader.presentation.chart
 
 import android.graphics.Bitmap
 import android.os.Environment
-import android.util.Log
 import androidx.lifecycle.LiveData
 import ru.sorokin.kirill.chartloader.R
 import ru.sorokin.kirill.chartloader.presentation.core.SingleLiveEvent
 import ru.sorokin.kirill.chartloader.presentation.core.resource.ResourceManager
 import ru.sorokin.kirill.chartloader.presentation.core.viewmodel.CoreViewModel
 import ru.sorokin.kirill.chartloader.presentation.models.SuccessSaveImageModel
+import ru.sorokin.kirill.chartloader.utils.Logger
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -58,13 +58,13 @@ class ChartViewModel(
             )
         } catch (e: Exception) {
             errorLiveData.value = resourceManager.getString(R.string.error_message_something_went_wrong)
-            Log.e(TAG, "saveImage: ", e)
+            Logger.e(TAG, "saveImage: ", e)
         } finally {
             fOut?.let {
                 try {
                     fOut.close()
                 } catch (e: IOException) {
-                    Log.e(TAG, "saveImage: ", e)
+                    Logger.e(TAG, "saveImage: ", e)
                 }
             }
         }
@@ -76,14 +76,14 @@ class ChartViewModel(
             FOLDER_NAME
         )
         if (!mediaStorageDir.exists() || !mediaStorageDir.mkdirs()) {
-            Log.e(TAG, "Failed to create directory")
+            Logger.e(TAG, "Failed to create directory")
             throw IOException()
         }
         val timeStamp = SimpleDateFormat(DATA_PATTERN, Locale.getDefault())
             .format(Date())
         val imageName = "IMG_$timeStamp.jpg"
         val selectedOutputPath = mediaStorageDir.path + File.separator + imageName
-        Log.d(TAG, "selected camera path $selectedOutputPath")
+        Logger.d(TAG, "selected camera path $selectedOutputPath")
         return selectedOutputPath
     }
 

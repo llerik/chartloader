@@ -1,11 +1,11 @@
 package ru.sorokin.kirill.chartloader.data.mapper
 
-import android.util.Log
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import ru.sorokin.kirill.chartloader.data.models.PointsEntity
 import ru.sorokin.kirill.chartloader.data.parser.Parser
+import ru.sorokin.kirill.chartloader.utils.Logger
 
 /**
  * ApiMapper запроса точек
@@ -33,12 +33,12 @@ class PointsApiMapperImpl(
         val response = okHttpClient
             .newCall(request)
             .execute()
-        Log.d(TAG, "getPoints: $response")
+        Logger.d(TAG, "getPoints: $response")
         if (!response.isSuccessful) {
             throw DataException(response.message())
         }
         val bodyString = response.body()?.string() ?: throw DataException("Body is empty")
-        Log.d(TAG, "getPoints: $bodyString")
+        Logger.d(TAG, "getPoints: $bodyString")
         return parser.parse(bodyString, PointsEntity::class.java)
     }
 

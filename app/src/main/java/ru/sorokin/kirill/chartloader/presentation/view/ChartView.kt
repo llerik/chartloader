@@ -5,7 +5,6 @@ import android.graphics.*
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
-import android.util.Log
 import android.util.TypedValue
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -17,6 +16,7 @@ import ru.sorokin.kirill.chartloader.presentation.view.move.MoveGestureListener
 import ru.sorokin.kirill.chartloader.presentation.view.move.MoveListener
 import ru.sorokin.kirill.chartloader.presentation.view.scale.ScaleGestureListener
 import ru.sorokin.kirill.chartloader.presentation.view.scale.ScaleListener
+import ru.sorokin.kirill.chartloader.utils.Logger
 
 
 /**
@@ -72,6 +72,8 @@ class ChartView @JvmOverloads constructor(
      */
     fun switchSmoothMode() {
         isSmoothEnable = !isSmoothEnable
+
+        createPath()
         invalidate()
     }
 
@@ -79,14 +81,13 @@ class ChartView @JvmOverloads constructor(
      * Установить список точек [list] для формирования графика
      */
     fun setContent(list: List<PointModel>) {
-        Log.d(TAG, "setContent: $list")
+        Logger.d(TAG, "setContent: $list")
         points.reset(list)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.drawColor(backgroundColor)
-        createPath()
         paint.style = Paint.Style.STROKE
         canvas.drawPath(pathLine, paint)
 
@@ -95,8 +96,10 @@ class ChartView @JvmOverloads constructor(
     }
 
     private fun createPath() {
+        Logger.d(TAG, "createPath: start")
         pathLine.reset()
         pathPoints.reset()
+        Logger.d(TAG, "isSmoothEnable $isSmoothEnable")
         for ((i, model) in points.withIndex()) {
             with(model) {
                 if (i == 0) {
@@ -125,6 +128,7 @@ class ChartView @JvmOverloads constructor(
                 )
             }
         }
+        Logger.d(TAG, "createPath: end")
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -132,6 +136,7 @@ class ChartView @JvmOverloads constructor(
         scaleByDefault()
         moveByDefault()
 
+        createPath()
         invalidate()
     }
 
@@ -210,6 +215,7 @@ class ChartView @JvmOverloads constructor(
         }
         points.forEach { it.update() }
         scaleRateX = 1f
+        createPath()
         invalidate()
     }
 
@@ -220,6 +226,7 @@ class ChartView @JvmOverloads constructor(
         points.forEach { it.update() }
         distance.x = 0f
         distance.y = 0f
+        createPath()
         invalidate()
     }
 

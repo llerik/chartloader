@@ -1,7 +1,6 @@
 package ru.sorokin.kirill.chartloader.presentation.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -24,6 +23,7 @@ import ru.sorokin.kirill.chartloader.presentation.core.resource.ResourceManagerI
 import ru.sorokin.kirill.chartloader.presentation.core.viewmodel.ViewModelProviderFactory
 import ru.sorokin.kirill.chartloader.presentation.main.converter.PointModelConverterImpl
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
+import ru.sorokin.kirill.chartloader.utils.Logger
 
 
 /**
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity(R.layout.main_activity) {
     }
 
     private fun onError(message: String) {
-        Log.d(TAG, "onError: $message")
+        Logger.d(TAG, "onError: $message")
         textField.error = message
         textField.isErrorEnabled = true
     }

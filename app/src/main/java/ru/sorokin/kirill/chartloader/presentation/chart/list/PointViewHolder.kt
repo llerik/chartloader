@@ -1,6 +1,5 @@
 package ru.sorokin.kirill.chartloader.presentation.chart.list
 
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -24,13 +23,8 @@ class PointViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
      */
     fun bindModel(model: PointModel) {
         with(model.point) {
-            Log.d(TAG, "bindModel: $model")
             coordinateX.text = x.toString()
             coordinateY.text = y.toString()
         }
-    }
-
-    companion object {
-        private const val TAG = "PointViewHolder"
     }
 }
