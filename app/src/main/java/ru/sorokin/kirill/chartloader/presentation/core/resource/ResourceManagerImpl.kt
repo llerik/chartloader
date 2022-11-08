@@ -17,7 +17,7 @@ class ResourceManagerImpl(
         return context.resources.getString(id)
     }
 
-    override fun getString(id: Int, vararg args: Any): String {
-        return context.resources.getString(id, args)
+    override fun getString(id: Int, arg: String): String {
+        return context.resources.getString(id, arg)
     }
 }

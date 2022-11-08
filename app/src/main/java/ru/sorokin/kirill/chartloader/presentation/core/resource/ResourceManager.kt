@@ -15,8 +15,8 @@ interface ResourceManager {
     fun getString(@StringRes id: Int): String
 
     /**
-     * Получить строковый ресурс по [id] с параметрами [args]
+     * Получить строковый ресурс по [id] с параметром [arg]
      */
-    fun getString(@StringRes id: Int, vararg args: Any): String
+    fun getString(@StringRes id: Int, arg: String): String
 
 }

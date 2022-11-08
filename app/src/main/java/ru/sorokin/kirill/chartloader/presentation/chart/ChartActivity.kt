@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -87,6 +88,7 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
             if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
                 viewModel.saveToFile(getBitmapFromView(chartView))
             } else {
+                Log.d(TAG, "onRequestPermissionsResult: permission denied")
                 Toast.makeText(this, R.string.save_image_error_permission, Toast.LENGTH_LONG)
                     .show()
             }
@@ -96,12 +98,8 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
     private fun tryToSave() {
         val permission = Manifest.permission.WRITE_EXTERNAL_STORAGE
         if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-            if (shouldShowRequestPermissionRationale(permission)) {
-                requestPermissions(arrayOf(permission), REQUEST_ID)
-            } else {
-                Toast.makeText(this, R.string.save_image_error_permission, Toast.LENGTH_LONG)
-                    .show()
-            }
+            Log.d(TAG, "tryToSave: no permission")
+            requestPermissions(arrayOf(permission), REQUEST_ID)
         } else {
             viewModel.saveToFile(getBitmapFromView(chartView))
         }
@@ -112,6 +110,7 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
     }
 
     private fun onSuccess(model: SuccessSaveImageModel) {
+        Log.d(TAG, "onSuccess: $model")
         Snackbar
             .make(chartView, model.message, Snackbar.LENGTH_LONG)
             .setAction(model.buttonName) {

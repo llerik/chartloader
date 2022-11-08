@@ -52,7 +52,7 @@ class ChartViewModel(
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut)
             fOut.flush()
             successLiveData.value = SuccessSaveImageModel(
-                resourceManager.getString(R.string.save_image_success, selectedOutputPath),
+                resourceManager.getString(R.string.save_image_success, file.name),
                 resourceManager.getString(R.string.show),
                 selectedOutputPath
             )
@@ -75,7 +75,7 @@ class ChartViewModel(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
             FOLDER_NAME
         )
-        if (!mediaStorageDir.exists() || !mediaStorageDir.mkdirs()) {
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
             Logger.e(TAG, "Failed to create directory")
             throw IOException()
         }
