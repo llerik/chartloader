@@ -12,7 +12,8 @@ import android.view.MotionEvent
  * @author Sorokin Kirill
  */
 class MoveGestureListener(
-    private val listener: MoveListener
+    private val listener: MoveListener,
+    private val longTapListener: LongTapListener? = null
 ) : GestureDetector.OnGestureListener {
 
     override fun onDown(e: MotionEvent): Boolean {
@@ -37,6 +38,7 @@ class MoveGestureListener(
     }
 
     override fun onLongPress(e: MotionEvent) {
+        longTapListener?.onLongTap(PointF(e.x, e.y))
     }
 
     override fun onFling(

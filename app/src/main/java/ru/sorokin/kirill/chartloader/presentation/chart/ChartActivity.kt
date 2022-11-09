@@ -23,7 +23,7 @@ import ru.sorokin.kirill.chartloader.presentation.core.resource.ResourceManagerI
 import ru.sorokin.kirill.chartloader.presentation.core.viewmodel.ViewModelProviderFactory
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 import ru.sorokin.kirill.chartloader.presentation.models.SuccessSaveImageModel
-import ru.sorokin.kirill.chartloader.presentation.view.ChartView
+import ru.sorokin.kirill.chartloader.presentation.view.surface.ChartSurfaceView
 import ru.sorokin.kirill.chartloader.utils.Logger
 
 /**
@@ -33,7 +33,7 @@ import ru.sorokin.kirill.chartloader.utils.Logger
  */
 class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
     private lateinit var viewModel: ChartViewModel
-    private lateinit var chartView: ChartView
+    private lateinit var chartView: ChartSurfaceView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +86,7 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_ID) {
             if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
-                viewModel.saveToFile(getBitmapFromView(chartView))
+                viewModel.saveToFile(getBitmapFromView())
             } else {
                 Log.d(TAG, "onRequestPermissionsResult: permission denied")
                 Toast.makeText(this, R.string.save_image_error_permission, Toast.LENGTH_LONG)
@@ -101,8 +101,15 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
             Log.d(TAG, "tryToSave: no permission")
             requestPermissions(arrayOf(permission), REQUEST_ID)
         } else {
-            viewModel.saveToFile(getBitmapFromView(chartView))
+            viewModel.saveToFile(getBitmapFromView())
         }
+    }
+
+    private fun getBitmapFromView(): Bitmap {
+        val bitmap = Bitmap.createBitmap(chartView.width, chartView.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        chartView.draw(canvas)
+        return bitmap
     }
 
     private fun onError(message: String) {
@@ -132,13 +139,6 @@ class ChartActivity : AppCompatActivity(R.layout.chart_activity) {
                 }
             }
             .show()
-    }
-
-    private fun getBitmapFromView(view: View): Bitmap {
-        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        view.draw(canvas)
-        return bitmap
     }
 
     private fun factory() = ViewModelProviderFactory<ChartViewModel> {

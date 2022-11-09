@@ -53,8 +53,8 @@
         app:layout_constraintTop_toBottomOf="@+id/header_table"
         tools:listitem="@layout/point_view_holder_layout" />
 
-    <ru.sorokin.kirill.chartloader.presentation.view.ChartView
-        style="@style/ChartView"
+    <ru.sorokin.kirill.chartloader.presentation.view.surface.ChartSurfaceView
+        style="@style/ChartSurfaceView"
         android:id="@+id/chart_view"
         android:layout_width="0dp"
         android:layout_height="0dp"

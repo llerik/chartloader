@@ -3,8 +3,8 @@
 
     <attr name="colorPoint" format="reference" />
 
-    <declare-styleable name="ChartView">
-        <attr name="chart_background" format="reference"/>
-        <attr name="chart_line" format="reference"/>
+    <declare-styleable name="ChartSurfaceView">
+        <attr name="chart_surface_background" format="reference"/>
+        <attr name="chart_surface_line" format="reference"/>
     </declare-styleable>
 </resources>
