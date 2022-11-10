@@ -1,80 +1,46 @@
 package ru.sorokin.kirill.chartloader.presentation.view.surface
 
-import android.graphics.*
-import android.view.SurfaceHolder
+import android.graphics.Path
+import android.graphics.PointF
+import android.graphics.RectF
+import ru.sorokin.kirill.chartloader.presentation.models.DrawModel
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
 import ru.sorokin.kirill.chartloader.presentation.view.move.MoveListener
 import ru.sorokin.kirill.chartloader.presentation.view.scale.ScaleListener
 import ru.sorokin.kirill.chartloader.utils.Logger
 
 /**
- * Thread формирования изображения графика
- *
- * @param surfaceHolder холдер view
- * @param colorLine цвет линии
- * @param backgroundColor цвет фона
+ * Адаптер графика
  *
  * @author Sorokin Kirill
  */
-class SurfaceThread(
-    private val surfaceHolder: SurfaceHolder,
-    private val colorLine: Int,
-    private val backgroundColor: Int
-) : Thread(), ScaleListener, MoveListener {
+class ChartAdapterImpl : ChartAdapter, ChartModelRepository, ScaleListener, MoveListener {
 
-    var isRunning = false
-    private var isInitialized = false
     private val lock = Object()
 
     private val distance = PointF()
     private val points = mutableListOf<PointModel>()
     private val pathLine = Path()
     private val pathPoints = Path()
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        strokeWidth = DEFAULT_STROKE_WIDTH
-        color = colorLine
-    }
     private var scaleRate = PointF(1f, 1f)
     private var height: Int = 0
     private var width: Int = 0
     private var isSmoothEnable = false
+    private var isInitialized = false
 
-    override fun run() {
-        super.run()
-        while (isRunning) {
-            var c: Canvas? = null
-            try {
-                synchronized(lock) {
-                    update()
-                    c = surfaceHolder.lockCanvas(null)
-                    synchronized(surfaceHolder) {
-                        c?.draw()
-                    }
-                }
-            } finally {
-                // do this in a finally so that if an exception is thrown
-                // during the above, we don't leave the Surface in an
-                // inconsistent state
-                if (c != null) {
-                    surfaceHolder.unlockCanvasAndPost(c)
-                }
-            }
+    override fun save(state: SurfaceSavedState) {
+        synchronized(lock) {
+            state.setList(points)
+            state.setSmooth(isSmoothEnable)
         }
     }
 
-    fun switchSmoothMode() {
+    override fun load(state: SurfaceSavedState) {
         synchronized(lock) {
-            isSmoothEnable = !isSmoothEnable
-            Logger.d(TAG, "switchSmoothMode: $isSmoothEnable")
+            points.reset(state.getList())
+            isSmoothEnable = state.isSmooth()
+            isInitialized = true
         }
-    }
-
-    fun setContent(list: List<PointModel>) {
-        Logger.d(TAG, "setContent: $list")
-        synchronized(lock) {
-            points.reset(list)
-        }
-        Logger.d(TAG, "setContent: colorLine: $colorLine backgroundColor: $backgroundColor")
     }
 
     override fun onScaleChange(scaleFactor: Float) {
@@ -101,7 +67,14 @@ class SurfaceThread(
         }
     }
 
-    fun onSizeChanged(w: Int, h: Int) {
+    override fun setContent(list: List<PointModel>) {
+        Logger.d(TAG, "setContent: $list")
+        synchronized(lock) {
+            points.reset(list)
+        }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int) {
         synchronized(lock) {
             Logger.d(TAG, "onSizeChanged: w: $w h: $h")
             height = h
@@ -114,31 +87,14 @@ class SurfaceThread(
         }
     }
 
-    fun save(state: SurfaceSavedState) {
+    override fun switchSmoothMode() {
         synchronized(lock) {
-            state.setList(points)
-            state.setSmooth(isSmoothEnable)
+            isSmoothEnable = !isSmoothEnable
+            Logger.d(TAG, "switchSmoothMode: $isSmoothEnable")
         }
     }
 
-    fun load(state: SurfaceSavedState) {
-        synchronized(lock) {
-            points.reset(state.getList())
-            isSmoothEnable = state.isSmooth()
-            isInitialized = true
-        }
-    }
-
-    private fun Canvas.draw() {
-        drawColor(backgroundColor)
-        paint.style = Paint.Style.STROKE
-        drawPath(pathLine, paint)
-
-        paint.style = Paint.Style.FILL_AND_STROKE
-        drawPath(pathPoints, paint)
-    }
-
-    private fun update() {
+    override fun update(): DrawModel {
         pathLine.reset()
         pathPoints.reset()
         for ((i, model) in points.withIndex()) {
@@ -169,6 +125,7 @@ class SurfaceThread(
                 )
             }
         }
+        return DrawModel(pathLine, pathPoints)
     }
 
     private fun moveByDefault() {
@@ -209,7 +166,6 @@ class SurfaceThread(
         }
         scaleRate.x = 1f
         scaleRate.y = 1f
-
     }
 
     private fun PointModel.update() {
@@ -223,7 +179,6 @@ class SurfaceThread(
     }
 
     companion object {
-        private const val TAG = "SurfaceThread"
 
         /**
          * Радиус точки
@@ -240,9 +195,7 @@ class SurfaceThread(
          */
         private const val MIN_SCALE = 0.01f
 
-        /**
-         * Толщина строки
-         */
-        private const val DEFAULT_STROKE_WIDTH = 5f
+        private const val TAG = "ChartAdapterImpl"
     }
+
 }

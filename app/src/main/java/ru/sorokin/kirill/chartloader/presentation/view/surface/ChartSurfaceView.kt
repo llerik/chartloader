@@ -9,8 +9,6 @@ import android.util.AttributeSet
 import android.view.*
 import ru.sorokin.kirill.chartloader.R
 import ru.sorokin.kirill.chartloader.presentation.models.PointModel
-import ru.sorokin.kirill.chartloader.presentation.view.move.MoveListener
-import ru.sorokin.kirill.chartloader.presentation.view.scale.ScaleListener
 import ru.sorokin.kirill.chartloader.utils.Logger
 
 /**
@@ -20,14 +18,13 @@ import ru.sorokin.kirill.chartloader.utils.Logger
  */
 class ChartSurfaceView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
-) : SurfaceView(context, attrs),
-    SurfaceHolder.Callback, ScaleListener, MoveListener {
+) : SurfaceView(context, attrs), SurfaceHolder.Callback {
 
-    private val delegate = CompositeDelegate(
-        context, this, this, null, this::performClick
+    private val adapter = ChartAdapterImpl()
+    private val delegate = CompositeGestureDelegate(
+        context, adapter, adapter, null, this::performClick
     )
-
-    private var thread: SurfaceThread? = null
+    private var thread: ChartSurfaceThread? = null
 
     private val backgroundColor = attrs?.let {
         val typedArray = context.obtainStyledAttributes(it, R.styleable.ChartSurfaceView)
@@ -48,32 +45,22 @@ class ChartSurfaceView @JvmOverloads constructor(
     }
 
     fun switchSmoothMode() {
-        thread?.switchSmoothMode()
+        adapter.switchSmoothMode()
     }
-
-    private var content: List<PointModel>? = null
 
     fun setContent(list: List<PointModel>) {
-        content = list
-    }
-
-    override fun onMove(point: PointF) {
-        thread?.onMove(point)
-    }
-
-    override fun onScaleChange(scaleFactor: Float) {
-        thread?.onScaleChange(scaleFactor)
+        adapter.setContent(list)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        thread?.onSizeChanged(width, height)
+        adapter.onSizeChanged(width, height)
     }
 
     override fun onSaveInstanceState(): Parcelable {
         return SavedState(super.onSaveInstanceState()).apply {
             Logger.d(TAG, "onSaveInstanceState: $this")
-            thread?.save(this)
+            adapter.save(this)
         }
     }
 
@@ -81,26 +68,26 @@ class ChartSurfaceView @JvmOverloads constructor(
         if (state is SavedState) {
             super.onRestoreInstanceState(state.superState)
             Logger.d(TAG, "onRestoreInstanceState: $state")
-            thread?.load(state)
+            adapter.load(state)
         } else {
             super.onRestoreInstanceState(state)
         }
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        thread = SurfaceThread(
+        thread = ChartSurfaceThread(
             holder,
+            adapter,
             colorLine,
             backgroundColor
         ).apply {
             isRunning = true
             start()
-            content?.let { setContent(it) }
         }
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-        thread?.onSizeChanged(width, height)
+        adapter.onSizeChanged(width, height)
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {

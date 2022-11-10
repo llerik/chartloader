@@ -16,7 +16,7 @@ import ru.sorokin.kirill.chartloader.presentation.view.scale.ScaleListener
  *
  * @author Sorokin Kirill
  */
-class CompositeDelegate(
+class CompositeGestureDelegate(
     context: Context,
     scaleListener : ScaleListener,
     moveListener: MoveListener,
